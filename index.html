@@ -9,7 +9,7 @@
             background-color: #ffeef8; 
             font-family: 'Comic Sans MS', cursive; 
             display: flex; 
-            flex-direction: column; /* Stacks clock above box */
+            flex-direction: column; 
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
@@ -18,12 +18,10 @@
             transition: background 0.05s;
         }
 
-        /* The Clock Emoji Area - Sitting in the pink space */
         #mascot {
-            font-size: 80px; /* Big and clear */
-            margin-bottom: 20px; /* Space between clock and white box */
+            font-size: 80px; 
+            margin-bottom: 20px; 
             filter: drop-shadow(0 5px 15px rgba(255, 105, 180, 0.4));
-            transition: transform 0.3s;
         }
 
         .box {
@@ -48,7 +46,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* 1600 RPM ROTATION BLUR */
         .eye-bleed-spin {
             animation: hyperDrive 0.037s infinite linear !important;
             background: #000000 !important; 
@@ -91,16 +88,8 @@
         const s = content[stage];
         msg.innerHTML = s.text;
         btnGroup.innerHTML = "";
-        const b1 = createBtn(s.b1, s.b1C);
-        const b2 = createBtn(s.b2, s.b2C);
-        
-        if(!s.rev) { 
-            btnGroup.appendChild(b1); 
-            btnGroup.appendChild(b2); 
-        } else { 
-            btnGroup.appendChild(b2); 
-            btnGroup.appendChild(b1); 
-        }
+        btnGroup.appendChild(createBtn(s.rev ? s.b2 : s.b1, s.rev ? s.b2C : s.b1C)); 
+        btnGroup.appendChild(createBtn(s.rev ? s.b1 : s.b2, s.rev ? s.b1C : s.b2C)); 
     }
 
     function createBtn(txt, col) {
@@ -111,6 +100,9 @@
     }
 
     function handleChoice(choice) {
+        // ADDED THE POP-UP BACK HERE
+        alert("CHOICE: " + choice);
+
         const isPositive = (choice === "YES" || choice === "YES PROCEED");
 
         if (isPositive) {
