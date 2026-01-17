@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PHASE 3: GRAVITY TIME</title>
+    <style>
+        body { 
+            background: #1a1a1a; color: #ff00ff; font-family: 'Courier New', monospace; 
+            text-align: center; height: 100vh; margin: 0; overflow: hidden;
+        }
+        #container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        #scale-base { width: 300px; height: 10px; background: #444; position: relative; margin: 50px; }
+        #platter { 
+            width: 400px; height: 15px; background: #ffb6c1; 
+            position: absolute; top: -15px; left: -50px;
+            transition: transform 0.1s; transform-origin: center;
+            border: 2px solid white;
+        }
+        #toolbox { display: flex; gap: 20px; margin-top: 50px; background: #333; padding: 25px; border: 5px dashed #ff00ff; }
+        .weight { 
+            width: 80px; height: 80px; background: #555; cursor: grab;
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; font-weight: bold; color: white; border: 2px solid #fff;
+        }
+        #time-display { font-size: 80px; color: #00ffff; text-shadow: 0 0 20px #00ffff; }
+        #glitch-log { color: yellow; height: 20px; font-size: 14px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="glitch-log">SYSTEM STABLE...</div>
+    <div id="time-display">00:00</div>
+    <div id="scale-base"><div id="platter"></div></div>
+    <div id="toolbox">
+        <div class="weight" draggable="true" ondragstart="drag(event, 60)">LARGE<br>ROCK</div>
+        <div class="weight" draggable="true" ondragstart="drag(event, 10)">STONE</div>
+        <div class="weight" draggable="true" ondragstart="drag(event, 1)">PEBBLE</div>
+        <div class="weight" draggable="true" ondragstart="drag(event, -1)" style="background: #004444;">HELIUM</div>
+    </div>
+    <button onclick="lockTime()" style="padding: 15px 50px; font-size: 20px; background: #ff00ff; color: white; border: none; cursor: pointer; margin-top: 30px;">LOCK ALARM</button>
+</div>
+
+<script>
+    let totalMinutes = 0;
+    let alarmSet = false;
+    let targetTime = "";
+
+    function drag(ev, val) { ev.dataTransfer.setData("baseValue", val); }
+    document.body.ondragover = (e) => e.preventDefault();
+    document.body.ondrop = (e) => {
+        if(alarmSet) return;
+        e.preventDefault();
+        let baseValue = parseInt(e.dataTransfer.getData("baseValue"));
+        let glitch = Math.random() > 0.7 ? (Math.floor(Math.random() * 5) - 2) : 0;
+        if(glitch !== 0) {
+            document.getElementById('glitch-log').innerText = "GLITCH: " + glitch + "m";
+            setTimeout(() => document.getElementById('glitch-log').innerText = "SYSTEM STABLE...", 1000);
+        }
+        totalMinutes += (baseValue + glitch);
+        if (totalMinutes < 0) totalMinutes = 0;
+        if (totalMinutes >= 1440) window.location.href = "index.html"; 
+        updateDisplay();
+    };
+
+    function updateDisplay() {
+        let h = Math.floor(totalMinutes / 60);
+        let m = totalMinutes % 60;
+        targetTime = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
+        document.getElementById('time-display').innerText = targetTime;
+        document.getElementById('platter').style.transform = `rotate(${(totalMinutes % 60) - 30}deg)`;
+    }
+
+    function lockTime() {
+        alarmSet = true;
+        alert("ALARM LOCKED FOR " + targetTime + ". LEAVE THIS TAB OPEN.");
+        // Check every second if the time matches
+        setInterval(() => {
+            let now = new Date();
+            let currentTime = (now.getHours() < 10 ? "0" + now.getHours() : now.getHours()) + ":" + 
+                              (now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes());
+            if(currentTime === targetTime) {
+                triggerHell();
+            }
+        }, 1000);
+    }
+
+    function triggerHell() {
+        // Redirect to the Stop Alarm page
+        window.location.href = "stop_alarm.html";
+    }
+</script>
+</body>
+</html>

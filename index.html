@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>THE ETERNAL DEADLINE</title>
+    <style>
+        body { 
+            background-color: #ffeef8; 
+            font-family: 'Comic Sans MS', cursive; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; overflow: hidden;
+            transition: background 0.05s;
+        }
+
+        .box {
+            background: white; padding: 50px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3); text-align: center;
+            border: 8px solid #ffb6c1; position: relative; width: 450px;
+            z-index: 10;
+        }
+
+        .btn-container { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+        
+        button {
+            padding: 15px 30px; border: none; border-radius: 50px;
+            font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.2s;
+        }
+
+        /* 1600 RPM ROTATION BLUR */
+        .eye-bleed-spin {
+            animation: hyperDrive 0.037s infinite linear !important;
+            background: #000000 !important; /* BOX TURNS BLACK */
+            color: #000000 !important;    /* TEXT DISAPPEARS */
+            border-color: #111 !important;
+            box-shadow: 0 0 100px #ff00ff !important;
+        }
+
+        @keyframes hyperDrive {
+            0% { transform: rotate(0deg) scale(1.6); }
+            100% { transform: rotate(360deg) scale(1.6); }
+        }
+
+        .no-cursor { cursor: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="box" id="mainBox">
+        <h1 id="message">Are you sure to enter in this eternity?</h1>
+        <div class="btn-container" id="btnGroup"></div>
+    </div>
+
+<script>
+    let stage = 1;
+    const box = document.getElementById('mainBox');
+    const msg = document.getElementById('message');
+    const btnGroup = document.getElementById('btnGroup');
+
+    // 1st stage, then directly to the Deadline stage
+    const content = {
+        1: { text: "Are you sure to enter in this eternity?", b1: "YES", b1C: "#b2fab4", b2: "NO", b2C: "#ffabab", rev: false },
+        2: { text: "Wait... are you really sure?<br>Think about your <b>offline deadlines</b>.", b1: "NO", b1C: "#00FF00", b2: "YES", b2C: "#FF0000", rev: false },
+        3: { text: "Final Step:<br>I am loading this page for you. Ready?", b1: "YES PROCEED", b1C: "#00FFFF", b2: "NO I'M LEAVING", b2C: "#FF00FF", rev: true }
+    };
+
+    function renderStage() {
+        const s = content[stage];
+        msg.innerHTML = s.text;
+        btnGroup.innerHTML = "";
+        const b1 = createBtn(s.b1, s.b1C);
+        const b2 = createBtn(s.b2, s.b2C);
+        
+        if(!s.rev) { 
+            btnGroup.appendChild(b1); 
+            btnGroup.appendChild(b2); 
+        } else { 
+            btnGroup.appendChild(b2); 
+            btnGroup.appendChild(b1); 
+        }
+    }
+
+    function createBtn(txt, col) {
+        const b = document.createElement('button');
+        b.innerText = txt; b.style.backgroundColor = col;
+        b.onclick = () => handleChoice(txt);
+        return b;
+    }
+
+    function handleChoice(choice) {
+        alert("CHOICE: " + choice);
+        const isPositive = choice === "YES" || choice === "YES PROCEED";
+
+        if (isPositive) {
+            if (stage < 3) { 
+                startSilentSpin(); 
+            } else { 
+                alert("FINALIZING..."); 
+                window.location.href = "calender.html"; // Connect to your Success Page
+            }
+        } else {
+            if (stage === 1) { 
+                alert("Closing portal...");
+                window.close(); 
+            } else { 
+                stage--; 
+                renderStage(); 
+            }
+        }
+    }
+
+    function startSilentSpin() {
+        box.classList.add('eye-bleed-spin');
+        document.body.classList.add('no-cursor');
+        
+        let elapsed = 0;
+        const duration = 5000; // 5 SECONDS - AS REQUESTED
+        const intervalTime = 60; 
+
+        const chaosInterval = setInterval(() => {
+            elapsed += intervalTime;
+            
+            // Background flicker
+            const colors = ["#ff00ff", "#00ffff", "#ff0000", "#00ff00", "#ffff00"];
+            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            if (elapsed >= duration) {
+                clearInterval(chaosInterval);
+                box.classList.remove('eye-bleed-spin');
+                document.body.classList.remove('no-cursor');
+                document.body.style.backgroundColor = "#ffeef8";
+                stage++;
+                renderStage();
+            }
+        }, intervalTime);
+    }
+
+    renderStage();
+</script>
+</body>
+</html>

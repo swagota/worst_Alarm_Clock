@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ALARM - THE ETERNAL CALENDAR</title>
+    <style>
+        body { 
+            background: #000; color: #0f0; 
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center; margin: 0; overflow: hidden;
+        }
+
+        #calendar-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .date-display {
+            border: 5px solid #0f0;
+            padding: 40px;
+            background: #111;
+            min-width: 300px;
+            box-shadow: 0 0 20px #0f0;
+        }
+
+        .month { font-size: 50px; font-weight: bold; color: #ff00ff; text-transform: uppercase; }
+        .day-num { font-size: 80px; display: block; margin: 10px 0; color: #fff; }
+        .day-name { font-size: 30px; color: #00ffff; }
+        .year { font-size: 20px; opacity: 0.5; }
+
+        .controls {
+            margin-top: 50px;
+            display: flex;
+            gap: 100px;
+        }
+
+        .nav-btn {
+            font-size: 100px;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.1s;
+        }
+
+        .nav-btn:hover { color: #fff; text-shadow: 0 0 20px #fff; }
+        .back-btn { color: #440000; } /* Looks disabled but is a trap */
+        .next-btn { color: #00ff00; }
+
+        #warning {
+            color: red;
+            font-size: 12px;
+            margin-top: 20px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="calendar-container">
+        <div class="date-display" id="display">
+            <div class="month" id="mText">JANUARY</div>
+            <div class="day-num" id="dNum">1</div>
+            <div class="day-name" id="dName">Thursday</div>
+            <div class="year" id="yText">2026</div>
+        </div>
+
+        <div class="controls">
+            <div class="nav-btn back-btn" onclick="triggerTrap()">⇦</div>
+            <div class="nav-btn next-btn" onclick="nextDay()">⇨</div>
+        </div>
+
+        <div id="warning">DO NOT CLICK THE RED ARROW. DO NOT REFRESH.</div>
+        <button onclick="confirmDate()" style="margin-top:20px; background:lime; padding:10px; cursor:pointer;">SET THIS DATE</button>
+    </div>
+
+<script>
+    // Start at Jan 1, 2026
+    let currentDate = new Date(2026, 0, 1);
+
+    function updateDisplay() {
+        const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        document.getElementById('mText').innerText = months[currentDate.getMonth()];
+        document.getElementById('dNum').innerText = currentDate.getDate();
+        document.getElementById('dName').innerText = days[currentDate.getDay()];
+        document.getElementById('yText').innerText = currentDate.getFullYear();
+    }
+
+    function nextDay() {
+        // Move forward by exactly 1 day
+        currentDate.setDate(currentDate.getDate() + 1);
+        
+        // Add a slight chance of "slipping" - sometimes it moves 2 days, sometimes 0
+        if(Math.random() > 0.95) {
+            alert("SLIP! The calendar pages stuck together.");
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        updateDisplay();
+    }
+
+    function triggerTrap() {
+        alert("CRITICAL ERROR: YOU TRIED TO GO BACK IN TIME.");
+        alert("TIME PARADOX DETECTED.");
+        // BANISH THEM TO THE START PAGE
+        window.location.href = "index.html"; 
+    }
+
+    function confirmDate() {
+        const confirmMsg = confirm("Are you sure you want to wake up on " + currentDate.toDateString() + "?");
+        if(confirmMsg) {
+            alert("Date Saved. Now set the time... if you can.");
+            // Proceed to the time setting logic we built earlier
+            window.location.href = "alarm_set.html";
+        }
+    }
+
+    // Initialize
+    updateDisplay();
+</script>
+</body>
+</html>
